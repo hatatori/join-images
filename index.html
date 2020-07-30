@@ -100,8 +100,10 @@
 
 				console.log(k.length+"/"+ArrayImage.length)
 
-				if(k.length == ArrayImage.length)
+				if(k.length == ArrayImage.length){
 					ColDrawImageCanvas(4)
+					extra.classList.add("invisible")
+				}
 
 
 			}
@@ -116,7 +118,7 @@
 			for(i of this.files)
 				link(i)
 
-			extra.classList.add("invisible")
+			
 
 
 
