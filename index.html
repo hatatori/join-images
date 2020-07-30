@@ -1,0 +1,232 @@
+<style>
+	*{
+		font-family: monospace;
+		padding: 0;
+		margin: 0;
+		font-size: 15;
+	}
+
+	.container{
+		padding: 10;
+	}
+
+	.square{
+		/*text-align: center;*/
+		/*width: 100;*/
+		/*height: 100;*/
+		/*background-color: #e67e22;*/
+		/*margin: 10;*/
+		padding: 10;
+		/*border: solid 1px #2980b9;*/
+	}
+
+	canvas{border: solid 1px #2980b9;}
+
+	.item{
+		width: 20;
+		height: 20;
+		background-color: #2980b9;
+		margin:2
+	}
+
+	.flex{
+		display: flex;
+	}
+	.grid{display: grid}
+	
+	.inblock div{display: inline-block;}
+
+	.invisible{display: none}
+
+	input,button{
+		padding: 10;
+		margin: 10;
+	}
+</style>
+
+<div class="container">
+
+	<input accept="image/*" multiple='multiple' type="file" name="" id='up' class='invisible'>
+	<button onclick='up.click()'>Upload</button>
+
+	<br>
+
+	<div class="square grid">
+		<label onclick="horizontalDrawImageCanvas()"><input type="radio" name="escolha" checked> line</label>
+		<label onclick="VerticalDrawImageCanvas()"><input type="radio" name="escolha"> row</label>
+		<label><input type="radio" name="escolha"> blocks</label>
+		<label><input id='colums' type="number" value=3>Number of columns</label>
+
+		<div id="result" >
+			<canvas id='myCanvas'></canvas>
+		</div>
+
+	</div>
+
+
+
+
+	<div id="extra" class=""></div>
+
+	<script>
+
+		w = []
+		h = []
+
+		ArrayImage = []	
+
+		function img(src){
+			im = new Image()
+			im.src = src
+			return im
+		}
+
+		function link(file){
+			r = new FileReader()
+			r.readAsDataURL(file)
+			r.onload = function(){
+				url = this.result
+
+
+				imagem_canvas = img(url)
+
+				extra.appendChild(imagem_canvas)
+
+				ArrayImage.push({
+					url:url,
+					w:imagem_canvas.width,
+					h:imagem_canvas.height
+				})
+
+			}
+
+			
+
+		}
+
+
+		up.onchange=function(e){
+			for(i of this.files)
+				link(i)
+
+
+			extra.classList.add("invisible")
+			
+			ColDrawImageCanvas(3)
+
+		}
+
+		function imageToCanvas(src,x,y){
+			var canvas = document.getElementById("myCanvas");
+			var ctx = canvas.getContext("2d");
+			var foto = img(src)
+			ctx.drawImage(foto, x, y);
+		}
+
+		var canvas = document.getElementById("myCanvas");
+		var ctx = canvas.getContext("2d");
+
+		function horizontalDrawImageCanvas(){
+
+			[x,y] = [0,0]
+
+			for(i of ArrayImage){
+				x += i.w
+				y = y < i.h ? i.h : y
+			}
+
+			myCanvas.width = x
+			myCanvas.height = y
+
+			x = 0
+			y = 0
+
+			// dy = parseInt((maiorFoto[1]-j.h)/2)
+			dy = 0
+
+			for(j of ArrayImage){
+				foto = img(j.url)
+				ctx.drawImage(foto, x, y+dy);
+				x = x+j.w
+			}
+		}
+
+		function VerticalDrawImageCanvas(){
+
+			[x,y] = [0,0]
+
+			for(i of ArrayImage){
+				y += i.h
+				x = x < i.w ? i.w : x
+			}
+
+			myCanvas.width = x
+			myCanvas.height = y
+
+			x = 0
+			y = 0
+
+			for(j of ArrayImage){
+				foto = img(j.url)
+				ctx.drawImage(foto, x, y);
+				y = y+j.h
+			}
+		}
+
+		function GetMajorDimension(){
+			[x,y] = [0,0]
+
+			for(i of ArrayImage){
+				y = y < i.h ? i.h : y
+				x = x < i.w ? i.w : x
+			}
+
+			maiorFoto = [x,y]
+			return maiorFoto
+		}
+
+		function ColDrawImageCanvas(n){
+
+		maiorFoto = GetMajorDimension()
+		
+		largura = maiorFoto[0]*n
+		quantidade = ArrayImage.length
+		diferenca = quantidade-n+1
+
+		myCanvas.width = x*n
+		myCanvas.height = Math.ceil(quantidade/n)*maiorFoto[1]
+
+
+
+		x = 0
+		y = 0
+
+		for(j of ArrayImage){
+
+			foto = img(j.url)
+
+			dx = parseInt((maiorFoto[0]-j.w)/2)
+			dy = parseInt((maiorFoto[1]-j.h)/2)
+
+
+			ctx.drawImage(foto, x+dx, y+dy);
+
+
+			x = x+maiorFoto[0]
+
+			y = (x > largura-1) ? y+maiorFoto[1] : y
+
+			x = (x > largura-1) ? 0 : x
+		}
+	}
+
+	colums.onchange=function(e){
+		ColDrawImageCanvas(parseInt(this.value))
+	}
+
+	window.onkeyup=function(e){
+		if(e.key == '*')
+			ColDrawImageCanvas(3)
+	}
+
+</script>
