@@ -98,21 +98,25 @@
 					h:imagem_canvas.height
 				})
 
+				if(k.length == ArrayImage.length)
+					ColDrawImageCanvas(4)
+
+
 			}
 
-			
+
 
 		}
 
 
 		up.onchange=function(e){
+			k = this.files
 			for(i of this.files)
 				link(i)
 
-
 			extra.classList.add("invisible")
-			
-			ColDrawImageCanvas(3)
+
+
 
 		}
 
