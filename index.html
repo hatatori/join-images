@@ -85,26 +85,28 @@
 			r = new FileReader()
 			r.readAsDataURL(file)
 			r.onload = function(){
-				url = this.result
 
+				url = this.result
 
 				imagem_canvas = img(url)
 
 				extra.appendChild(imagem_canvas)
 
-				ArrayImage.push({
-					url:url,
-					w:imagem_canvas.width,
-					h:imagem_canvas.height
-				})
+				imagem_canvas.onload=function(){
+					ArrayImage.push({
+						url:this.src,
+						w:this.width,
+						h:this.height
+					})
 
-				console.log(k.length+"/"+ArrayImage.length)
-
-				if(k.length == ArrayImage.length){
-					ColDrawImageCanvas(4)
-					extra.classList.add("invisible")
+					if(k.length == ArrayImage.length){
+						ColDrawImageCanvas(3)
+						extra.classList.add("invisible")
+					}
+					
 				}
 
+				
 
 			}
 
@@ -193,48 +195,49 @@
 			return maiorFoto
 		}
 
+
 		function ColDrawImageCanvas(n){
 
-		maiorFoto = GetMajorDimension()
-		
-		largura = maiorFoto[0]*n
-		quantidade = ArrayImage.length
-		diferenca = quantidade-n+1
+			m = GetMajorDimension()
 
-		myCanvas.width = x*n
-		myCanvas.height = Math.ceil(quantidade/n)*maiorFoto[1]
+			largura = m[0]*n
+			quantidade = ArrayImage.length
+			diferenca = quantidade-n+1
 
-
-
-		x = 0
-		y = 0
-
-		for(j of ArrayImage){
-
-			foto = img(j.url)
-
-			dx = parseInt((maiorFoto[0]-j.w)/2)
-			dy = parseInt((maiorFoto[1]-j.h)/2)
+			myCanvas.width = x*n
+			myCanvas.height = Math.ceil(quantidade/n)*m[1]
 
 
-			ctx.drawImage(foto, x+dx, y+dy);
+
+			x = 0
+			y = 0
+
+			for(j of ArrayImage){
+
+				foto = img(j.url)
+
+				dx = parseInt((m[0]-j.w)/2)
+				dy = parseInt((m[1]-j.h)/2)
 
 
-			x = x+maiorFoto[0]
+				ctx.drawImage(foto, x+dx, y+dy);
 
-			y = (x > largura-1) ? y+maiorFoto[1] : y
 
-			x = (x > largura-1) ? 0 : x
+				x = x+maiorFoto[0]
+
+				y = (x > largura-1) ? y+m[1] : y
+
+				x = (x > largura-1) ? 0 : x
+			}
 		}
-	}
 
-	colums.onchange=function(e){
-		ColDrawImageCanvas(parseInt(this.value))
-	}
+		colums.onchange=function(e){
+			ColDrawImageCanvas(parseInt(this.value))
+		}
 
-	window.onkeyup=function(e){
-		if(e.key == '*')
-			ColDrawImageCanvas(3)
-	}
+		window.onkeyup=function(e){
+			if(e.key == '*')
+				ColDrawImageCanvas(3)
+		}
 
-</script>
+	</script>
