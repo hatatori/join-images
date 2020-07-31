@@ -7,7 +7,7 @@
 	}
 
 	.container{
-		padding: 10;
+		/*padding: 10;*/
 	}
 
 	.square{
@@ -55,7 +55,8 @@
 		<label onclick="horizontalDrawImageCanvas()"><input type="radio" name="escolha" checked> line</label>
 		<label onclick="VerticalDrawImageCanvas()"><input type="radio" name="escolha"> row</label>
 		<label><input type="radio" name="escolha"> blocks</label>
-		<label><input id='colums' type="number" value=3>Number of columns</label>
+		<label><button onclick="putText()">Legenda</button></label>
+		<label><input id='colums' type="number" value=3>number of columns</label>
 
 		<div id="result" >
 			<canvas id='myCanvas'></canvas>
@@ -81,6 +82,23 @@
 			return im
 		}
 
+
+		function Text(_str,_x,_y){
+			var canvas = document.getElementById("myCanvas");
+			var ctx = canvas.getContext("2d");
+
+			ctx.font = "14px monospace";
+			ctx.fillStyle = 'white'
+			ctx.strokeText(_str, _x-1, _y+10);
+			ctx.strokeText(_str, _x+1, _y+10);
+			ctx.strokeText(_str, _x-1, _y+10);
+			ctx.strokeText(_str, _x+1, _y+10);
+
+			ctx.font = "14px monospace";
+			ctx.fillStyle = 'white'
+			ctx.fillText(_str, _x, _y+10)
+		}
+
 		function link(file){
 			r = new FileReader()
 			r.readAsDataURL(file)
@@ -93,17 +111,22 @@
 				extra.appendChild(imagem_canvas)
 
 				imagem_canvas.onload=function(){
+
+					name = file.name
+
 					ArrayImage.push({
 						url:this.src,
 						w:this.width,
-						h:this.height
+						h:this.height,
+						n:name
 					})
+
 
 					if(k.length == ArrayImage.length){
 						ColDrawImageCanvas(3)
 						extra.classList.add("invisible")
 					}
-					
+
 				}
 
 				
@@ -145,6 +168,7 @@
 				y = y < i.h ? i.h : y
 			}
 
+
 			myCanvas.width = x
 			myCanvas.height = y
 
@@ -184,19 +208,21 @@
 		}
 
 		function GetMajorDimension(){
-			[x,y] = [0,0]
+			[ax,ay] = [0,0]
 
 			for(i of ArrayImage){
-				y = y < i.h ? i.h : y
-				x = x < i.w ? i.w : x
+				ay = ay < i.h ? i.h : ay
+				ax = ax < i.w ? i.w : ax
 			}
 
-			maiorFoto = [x,y]
+			maiorFoto = [ax,ay]
 			return maiorFoto
 		}
 
 
 		function ColDrawImageCanvas(n){
+
+			[x,y] = [0,0]
 
 			m = GetMajorDimension()
 
@@ -204,7 +230,7 @@
 			quantidade = ArrayImage.length
 			diferenca = quantidade-n+1
 
-			myCanvas.width = x*n
+			myCanvas.width = largura
 			myCanvas.height = Math.ceil(quantidade/n)*m[1]
 
 
@@ -222,6 +248,13 @@
 
 				ctx.drawImage(foto, x+dx, y+dy);
 
+				// for(z=0;z<10;z++)
+				// if(nameofpic.checked)
+					// Text(j.n,x+10,y+m[1]-25)
+
+				// putText()
+				
+
 
 				x = x+maiorFoto[0]
 
@@ -230,6 +263,31 @@
 				x = (x > largura-1) ? 0 : x
 			}
 		}
+		
+
+		function putText(){
+			om = GetMajorDimension()
+
+			px = -1
+			py = 0
+
+			for(l of ArrayImage){
+				
+				px++
+
+				nome = l.n
+				nome = nome.match(/(.*)(\..+)/i)
+
+				if(px*m[0] == largura){
+					py++
+					px = 0
+				}
+				
+				Text(nome[1],px*m[0]+10,py*m[1]+m[1]-25)
+			}
+		}
+
+
 
 		colums.onchange=function(e){
 			ColDrawImageCanvas(parseInt(this.value))
