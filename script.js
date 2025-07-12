@@ -203,6 +203,15 @@ function canvasToImage() {
     img.src = dataURL;
     // document.body.appendChild(img);
 
+    myCanvas.toBlob(blob => {
+        const item = new ClipboardItem({ 'image/png': blob });
+        navigator.clipboard.write([item]).then(() => {
+            console.log('Imagem copiada para a área de transferência!');
+        }).catch(err => {
+            console.error('Erro ao copiar: ', err);
+        });
+    });
+
 }
 
 
